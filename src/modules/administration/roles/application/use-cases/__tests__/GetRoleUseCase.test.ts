@@ -16,6 +16,8 @@ describe('GetRoleUseCase', () => {
       findAll: vi.fn(),
       delete: vi.fn(),
       count: vi.fn(),
+      existsByName: vi.fn(),
+      findByUserId: vi.fn(),
     };
 
     useCase = new GetRoleUseCase(mockRepository);
