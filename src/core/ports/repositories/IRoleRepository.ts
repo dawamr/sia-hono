@@ -1,5 +1,4 @@
 import type { Role } from '@core/domain/entities/Role';
-import type { UserRole } from '@shared/types';
 
 /**
  * Role filters for querying
@@ -7,12 +6,13 @@ import type { UserRole } from '@shared/types';
 export interface RoleFilters {
   tenantId?: string;
   isActive?: boolean;
-  name?: UserRole;
+  name?: string; // Changed from UserRole to support custom roles
 }
 
 /**
  * Role Repository Port
  * Interface for role persistence operations
+ * Supports both predefined roles (super_admin, admin, etc.) and custom roles
  */
 export interface IRoleRepository {
   /**
@@ -21,9 +21,9 @@ export interface IRoleRepository {
   findById(id: string): Promise<Role | null>;
 
   /**
-   * Find role by name
+   * Find role by name (supports both predefined and custom role names)
    */
-  findByName(name: UserRole, tenantId?: string): Promise<Role | null>;
+  findByName(name: string, tenantId?: string): Promise<Role | null>;
 
   /**
    * Find all roles with optional filters
@@ -41,9 +41,9 @@ export interface IRoleRepository {
   delete(id: string): Promise<void>;
 
   /**
-   * Check if role exists by name
+   * Check if role exists by name (supports custom roles)
    */
-  existsByName(name: UserRole, tenantId?: string, excludeRoleId?: string): Promise<boolean>;
+  existsByName(name: string, tenantId?: string, excludeRoleId?: string): Promise<boolean>;
 
   /**
    * Count roles with filters
