@@ -1,13 +1,12 @@
-import type { UserRole as UserRoleType } from '@shared/types';
-
 /**
  * Role Entity
  * Represents a user role with permissions
+ * Supports both predefined roles (admin, teacher, etc.) and custom roles
  */
 export class Role {
   private constructor(
     private readonly id: string,
-    private name: UserRoleType,
+    private name: string,
     private displayName: string,
     private description: string | null,
     private permissions: string[],
@@ -21,7 +20,7 @@ export class Role {
    * Create a new Role
    */
   static create(props: {
-    name: UserRoleType;
+    name: string;
     displayName: string;
     description?: string;
     permissions?: string[];
@@ -47,7 +46,7 @@ export class Role {
    */
   static reconstitute(props: {
     id: string;
-    name: UserRoleType;
+    name: string;
     displayName: string;
     description: string | null;
     permissions: string[];
@@ -74,7 +73,7 @@ export class Role {
     return this.id;
   }
 
-  getName(): UserRoleType {
+  getName(): string {
     return this.name;
   }
 
@@ -202,7 +201,7 @@ export class Role {
    */
   toPersistence(): {
     id: string;
-    name: UserRoleType;
+    name: string;
     displayName: string;
     description: string | null;
     permissions: string[];
