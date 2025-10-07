@@ -3,7 +3,6 @@ import { db } from '@config/database';
 import { roles, userRoles } from '../schema';
 import type { IRoleRepository, RoleFilters } from '@core/ports/repositories/IRoleRepository';
 import { Role } from '@core/domain/entities/Role';
-import type { UserRole } from '@shared/types';
 
 /**
  * Role Repository Implementation
@@ -26,7 +25,7 @@ export class RoleRepository implements IRoleRepository {
   /**
    * Find role by name
    */
-  async findByName(name: UserRole, tenantId?: string): Promise<Role | null> {
+  async findByName(name: string, tenantId?: string): Promise<Role | null> {
     const conditions = [eq(roles.name, name)];
 
     if (tenantId) {
@@ -70,7 +69,7 @@ export class RoleRepository implements IRoleRepository {
         name: data.name,
         displayName: data.displayName,
         description: data.description,
-        permissions: JSON.stringify(data.permissions),
+        permissions: data.permissions, // Direct array assignment, no JSON.stringify needed
         tenantId: data.tenantId,
         isActive: data.isActive,
         createdAt: data.createdAt,
@@ -81,7 +80,7 @@ export class RoleRepository implements IRoleRepository {
         set: {
           displayName: data.displayName,
           description: data.description,
-          permissions: JSON.stringify(data.permissions),
+          permissions: data.permissions, // Direct array assignment, no JSON.stringify needed
           isActive: data.isActive,
           updatedAt: data.updatedAt,
         },
@@ -103,7 +102,7 @@ export class RoleRepository implements IRoleRepository {
    * Check if role exists by name
    */
   async existsByName(
-    name: UserRole,
+    name: string,
     tenantId?: string,
     excludeRoleId?: string
   ): Promise<boolean> {
@@ -191,11 +190,13 @@ export class RoleRepository implements IRoleRepository {
    * Convert database row to domain entity
    */
   private toDomain(row: typeof roles.$inferSelect): Role {
-    const permissions = JSON.parse(row.permissions) as string[];
+    // row.permissions is already string[] from PostgreSQL array type
+    // No JSON.parse needed - Drizzle handles array conversion automatically
+    const permissions = row.permissions;
 
     return Role.reconstitute({
       id: row.id,
-      name: row.name,
+      name: row.name as any, // Type assertion for custom role names
       displayName: row.displayName,
       description: row.description,
       permissions,
