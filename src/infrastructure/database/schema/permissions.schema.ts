@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, uuid, boolean, primaryKey } from 'drizzle-orm/pg-core';
-import { rolesTable } from './roles.schema';
+import { roles } from './roles.schema';
 
 /**
  * Permissions table
@@ -25,7 +25,7 @@ export const rolePermissionsTable = pgTable(
   {
     roleId: uuid('role_id')
       .notNull()
-      .references(() => rolesTable.id, { onDelete: 'cascade' }),
+      .references(() => roles.id, { onDelete: 'cascade' }),
     permissionId: uuid('permission_id')
       .notNull()
       .references(() => permissionsTable.id, { onDelete: 'cascade' }),
