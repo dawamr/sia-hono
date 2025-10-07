@@ -1,5 +1,6 @@
 import { db, closeDatabaseConnection } from '@config/database';
-import { users, roles, userRoles } from '../schema/users.schema';
+import { users, userRoles } from '../schema/users.schema';
+import { roles } from '../schema/roles.schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
@@ -14,7 +15,7 @@ export const seedRoles = async () => {
       name: 'super_admin' as const,
       displayName: 'Super Administrator',
       description: 'Full system access with all permissions',
-      permissions: JSON.stringify([
+      permissions: [
         'system:*',
         'users:*',
         'roles:*',
@@ -25,14 +26,14 @@ export const seedRoles = async () => {
         'grades:*',
         'attendance:*',
         'reports:*',
-      ]),
+      ],
       isActive: true,
     },
     {
       name: 'admin' as const,
       displayName: 'Administrator',
       description: 'School-level administrative access',
-      permissions: JSON.stringify([
+      permissions: [
         'users:read',
         'users:write',
         'classes:*',
@@ -41,47 +42,47 @@ export const seedRoles = async () => {
         'grades:read',
         'attendance:*',
         'reports:read',
-      ]),
+      ],
       isActive: true,
     },
     {
       name: 'teacher' as const,
       displayName: 'Teacher',
       description: 'Teacher access for class management',
-      permissions: JSON.stringify([
+      permissions: [
         'classes:read',
         'courses:read',
         'assignments:*',
         'grades:*',
         'attendance:*',
         'students:read',
-      ]),
+      ],
       isActive: true,
     },
     {
       name: 'student' as const,
       displayName: 'Student',
       description: 'Student access to view materials and submit work',
-      permissions: JSON.stringify([
+      permissions: [
         'classes:read',
         'courses:read',
         'assignments:read',
         'assignments:submit',
         'grades:read',
         'attendance:read',
-      ]),
+      ],
       isActive: true,
     },
     {
       name: 'parent' as const,
       displayName: 'Parent/Guardian',
       description: 'Parent access to view child progress',
-      permissions: JSON.stringify([
+      permissions: [
         'students:read',
         'grades:read',
         'attendance:read',
         'reports:read',
-      ]),
+      ],
       isActive: true,
     },
   ];
