@@ -1,22 +1,31 @@
-import { pgTable, text, timestamp, uuid, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, boolean, varchar } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 /**
  * Roles table
- * Stores system roles with their metadata
+ * Supports both predefined roles (super_admin, admin, etc.) and custom roles
+ * Separated from users.schema.ts for better maintainability
  */
-export const rolesTable = pgTable('roles', {
+export const roles = pgTable('roles', {
   id: uuid('id').primaryKey().defaultRandom(),
-  name: text('name').notNull().unique(), // e.g., "super_admin", "admin", "teacher", "student"
-  displayName: text('display_name').notNull(), // e.g., "Super Administrator"
+  name: text('name').notNull().unique(), // Changed from enum to text to support custom roles
+  displayName: varchar('display_name', { length: 100 }).notNull(),
   description: text('description'),
-  permissions: text('permissions').array().notNull().default(sql`'{}'::text[]`), // Array of permission strings - PostgreSQL array syntax
-  tenantId: uuid('tenant_id'), // For multi-tenancy support
+  
+  // Permissions (text array of permission strings)
+  permissions: text('permissions').array().notNull().default(sql`'{}'::text[]`),
+  
+  // Multi-tenancy
+  tenantId: uuid('tenant_id'),
+  
+  // Status
   isActive: boolean('is_active').notNull().default(true),
+  
+  // Timestamps
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-// Use different type names to avoid conflict with users.schema.ts
-export type RoleRow = typeof rolesTable.$inferSelect;
-export type NewRoleRow = typeof rolesTable.$inferInsert;
+// Export types (using RoleRow naming to avoid conflict with users.schema type exports)
+export type RoleRow = typeof roles.$inferSelect;
+export type NewRoleRow = typeof roles.$inferInsert;
