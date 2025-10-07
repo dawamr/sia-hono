@@ -1,16 +1,6 @@
-import { pgTable, uuid, varchar, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-
-/**
- * User role enum
- */
-export const userRoleEnum = pgEnum('user_role', [
-  'super_admin',
-  'admin',
-  'teacher',
-  'student',
-  'parent',
-]);
+import { roles } from './roles.schema';
 
 /**
  * Users table
@@ -47,30 +37,8 @@ export const users = pgTable('users', {
 });
 
 /**
- * Roles table
- */
-export const roles = pgTable('roles', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: userRoleEnum('name').notNull(),
-  displayName: varchar('display_name', { length: 100 }).notNull(),
-  description: text('description'),
-  
-  // Permissions (JSON array of permission strings)
-  permissions: text('permissions').notNull().default('[]'),
-  
-  // Multi-tenancy
-  tenantId: uuid('tenant_id'),
-  
-  // Status
-  isActive: boolean('is_active').notNull().default(true),
-  
-  // Timestamps
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
-/**
  * User-Role junction table (many-to-many)
+ * Links users with their assigned roles
  */
 export const userRoles = pgTable('user_roles', {
   id: uuid('id').primaryKey().defaultRandom(),
