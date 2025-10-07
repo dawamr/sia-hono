@@ -6,8 +6,10 @@
 // User schemas
 export * from './users.schema';
 
-// Role and Permission schemas
+// Role schemas
 export * from './roles.schema';
+
+// Permission schemas
 export * from './permissions.schema';
 
 // Future schemas
